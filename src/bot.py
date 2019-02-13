@@ -15,8 +15,9 @@ def has_jabber_account(user):
 
 
 def create_jabber_account(user):
-    # TODO
-    pass
+    password = subprocess.check_output(['pwgen', '-cny1', '32']).strip()
+    user = subprocess.check_output(['prosodyctl', 'register', user, 'jabber.chaos.social', password])
+    return password
 
 
 def send_help(status):
@@ -45,7 +46,8 @@ def handle_notification(notification):
     if has_jabber_account(user):
         mastodon.status_reply(to_status['id'], '{}@jabber.chaos.social is already your registered jabber account – you can register only once.'.format(user))
         return
-    create_jabber_account(user)
+    password = create_jabber_account(user)
+    mastodon.status_reply(to_status['id'], 'Your Jabber account has been created:\n\nUser: {user}@jabber.chaos.social\nPassword: {password}\n\nPlease change the password soon, using a client like Pidgin.', visibility='private')
 
 
 if __name__ == '__main__':
