@@ -40,11 +40,11 @@ def handle_notification(notification):
         send_help(status)
         return
     if status['account']['username'] != status['account']['acct']:
-        mastodon.status_reply(to_status['id'], 'Sorry, our Jabber accounts are only available to inhabitants of chaos.social.')
+        mastodon.status_reply(to_status=status['id'], 'Sorry, our Jabber accounts are only available to inhabitants of chaos.social.')
         return
     user = status['account']['username']
     if has_jabber_account(user):
-        mastodon.status_reply(to_status['id'], '{}@jabber.chaos.social is already your registered jabber account – you can register only once.'.format(user))
+        mastodon.status_reply(to_status=status['id'], '{}@jabber.chaos.social is already your registered jabber account – you can register only once.'.format(user))
         return
     password = create_jabber_account(user)
     mastodon.status_reply(to_status['id'], 'Your Jabber account has been created:\n\nUser: {user}@jabber.chaos.social\nPassword: {password}\n\nPlease change the password soon, using a client like Pidgin.', visibility='private')
