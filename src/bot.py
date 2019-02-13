@@ -9,8 +9,9 @@ mastodon = Mastodon(
 
 
 def has_jabber_account(user):
-    # TODO
-    pass
+    # As per https://wiki.archlinux.org/index.php/prosody#Listing_users
+    user_list = subprocess.check_output(['ls', '-l', '/var/lib/prosody/*/accounts/*']).split('\n')
+    return user.lower() in [u.lower() for u in user_list]
 
 
 def create_jabber_account(user):
