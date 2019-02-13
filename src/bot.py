@@ -46,8 +46,16 @@ def handle_notification(notification):
     if has_jabber_account(user):
         mastodon.status_reply(to_status=status['id'], '{}@jabber.chaos.social is already your registered jabber account – you can register only once.'.format(user))
         return
-    password = create_jabber_account(user)
-    mastodon.status_reply(to_status['id'], 'Your Jabber account has been created:\n\nUser: {user}@jabber.chaos.social\nPassword: {password}\n\nPlease change the password soon, using a client like Pidgin.', visibility='private')
+    try:
+        password = create_jabber_account(user)
+        mastodon.status_reply(to_status=status['id'], 'Your Jabber account has been created:\n\nUser: {user}@jabber.chaos.social\nPassword: {password}\n\nPlease change the password soon, using a client like Pidgin.'.format(user=user, password=password), visibility='private')
+    except Exception as e:
+        if isinstance(e, subprocess.CalledProcessError) and 'That user already exists' in e.output:
+            mastodon.status_reply(to_status=status['id'], '{}@jabber.chaos.social is already your registered jabber account – you can register only once.'.format(user))
+        else:
+            print(e)
+            mastodon.status_reply(to_status=status['id'], 'Oops, I could not register your account. Please stay tuned, I will page my admins.', visibility='private')
+            mastodon.status_post(status='@rixx Hey, I failed to register an account for "{user}": {e}'.format(user=user, e=str(e)), visibility='private')
 
 
 if __name__ == '__main__':
@@ -58,4 +66,4 @@ if __name__ == '__main__':
                 mastodon.notifications_dismiss(notification['id'])
         except Exception as exc:
             print(exc)
-        time.sleep(10)
+        time.sleep(5)
