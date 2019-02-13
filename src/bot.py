@@ -1,10 +1,11 @@
+import time
+
 from mastodon import Mastodon
 
 mastodon = Mastodon(
     access_token = 'pytooter_usercred.secret',
-    api_base_url = 'https://mastodon.social'
+    api_base_url = 'https://chaos.social'
 )
-mastodon.toot('Tooting from python using #mastodonpy !')
 
 
 def has_jabber_account(user):
@@ -46,6 +47,12 @@ def handle_notification(notification):
     create_jabber_account(user)
 
 
-for notification in mastodon.notifications():
-    handle_notification(notification)
-    mastodon.notifications_dismiss(notification['id'])
+if __name__ == '__main__':
+    while True:
+        try:
+            for notification in mastodon.notifications():
+                handle_notification(notification)
+                mastodon.notifications_dismiss(notification['id'])
+        except Exception as exc:
+            print(exc)
+        time.sleep(10)
