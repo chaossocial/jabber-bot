@@ -7,6 +7,16 @@ mastodon = Mastodon(
 mastodon.toot('Tooting from python using #mastodonpy !')
 
 
+def has_jabber_account(user):
+    # TODO
+    pass
+
+
+def create_jabber_account(user):
+    # TODO
+    pass
+
+
 def send_help(status):
     help_text = 'Hi! I am a helper bot for the chaos.social jabber server. If you want an account on our jabber server, message me with a message containing the word "register"!\n\nIf you have any questions, feel free to ask leah or rixx.'
     mastodon.status_reply(to_status=status['id'], help_text)
@@ -29,6 +39,11 @@ def handle_notification(notification):
     if status['account']['username'] != status['account']['acct']:
         mastodon.status_reply(to_status['id'], 'Sorry, our Jabber accounts are only available to inhabitants of chaos.social.')
         return
+    user = status['account']['username']
+    if has_jabber_account(user):
+        mastodon.status_reply(to_status['id'], '{}@jabber.chaos.social is already your registered jabber account – you can register only once.'.format(user))
+        return
+    create_jabber_account(user)
 
 
 for notification in mastodon.notifications():
