@@ -1,3 +1,4 @@
+import subprocess
 import time
 
 from mastodon import Mastodon
